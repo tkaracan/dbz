@@ -23,19 +23,33 @@ A real-time weather radar visualization tool that displays NEXRAD radar data on 
 
 ## Project Structure 
 ├── backend/
+
 │ ├── main.py # FastAPI server
+
 │ ├── radar_viz.py # Radar visualization logic
+
 │ ├── radar_cache.py # Caching implementation
+
 │ ├── utils.py # Utility functions
+
 │ └── requirements.txt # Python dependencies
+
 ├── frontend/
+
 │ ├── index.html # Main HTML file
+
 │ ├── css/
+
 │ │ └── styles.css # Styling
+
 │ └── js/
+
 │ └── radar.js # Frontend logic
+
 ├── .env # Environment variables
+
 ├── .env.example # Example environment file
+
 └── README.md # Documentation
 
 

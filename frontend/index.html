@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Visualization</title>
+    
+    <!-- Load libraries but don't initialize yet -->
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Add initialization script -->
+    <script>
+        // Add retry logic with delay
+        async function fetchWithRetry(url, maxRetries = 5, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    console.log(`Attempt ${i + 1} to fetch token...`);
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    console.log('Token fetch successful:', { tokenLength: data.mapboxToken?.length });
+                    return data;
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i < maxRetries - 1) {
+                        console.log(`Waiting ${delay}ms before retry...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+            }
+            throw new Error(`Failed to fetch after ${maxRetries} attempts`);
+        }
+
+        // Wait for token before initializing
+        async function initializeMapbox() {
+            try {
+                console.log('Starting initialization...');
+                const config = await fetchWithRetry('/config');
+                
+                // Set token globally for both libraries to access
+                window.MAPBOX_TOKEN = config.mapboxToken;
+                mapboxgl.accessToken = config.mapboxToken;
+                
+                console.log('Tokens set, loading radar.js...');
+                
+                // Now load radar.js
+                const script = document.createElement('script');
+                script.src = '/js/radar.js';
+                script.onload = () => console.log('radar.js loaded successfully');
+                script.onerror = (e) => console.error('Error loading radar.js:', e);
+                document.body.appendChild(script);
+            } catch (error) {
+                console.error('Failed to initialize Mapbox:', error);
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:5px;';
+                errorDiv.textContent = 'Failed to initialize map. Please refresh the page.';
+                document.body.appendChild(errorDiv);
+            }
+        }
+        
+        // Call initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded, starting initialization...');
+            initializeMapbox();
+        });
+    </script>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="accordion">
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3>Display Settings</h3>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="control-group">
+                        <label for="radius-pixels">Point Size (pixels):</label>
+                        <input type="range" id="radius-pixels" value="25" min="1" max="100">
+                        <span class="value-display">25</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="intensity">Intensity:</label>
+                        <input type="range" id="intensity" value="0.8" min="0.1" max="1" step="0.1">
+                        <span class="value-display">0.8</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="threshold">Threshold:</label>
+                        <input type="range" id="threshold" value="0.5" min="0.1" max="1.0" step="0.1">
+                        <span class="value-display">0.5</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="opacity">Opacity:</label>
+                        <input type="range" id="opacity" value="0.8" min="0" max="1" step="0.1">
+                        <span class="value-display">0.8</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3>Active Radar Stations</h3>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div id="radar-station-list">
+                        <!-- Radar stations will be added here dynamically -->
+                    </div>
+                    <div class="control-group">
+                        <label for="radar-range">Radar Range (km):</label>
+                        <input type="range" id="radar-range" value="230" min="0" max="230">
+                        <span class="value-display">230</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-panel-spacer"></div>
+        
+        <div class="control-panel-bottom">
+            <div class="scan-stats">
+                <h3>Scan Area Statistics</h3>
+                <div id="dbz-stats" class="dbz-stats">
+                    No data available
+                </div>
+            </div>
+            <button id="show-radar" class="primary-button">Scan</button>
+        </div>
+    </div>
+    <div id="tooltip" style="display: none; position: absolute; z-index: 1; pointer-events: none; background: rgba(0, 0, 0, 0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;"></div>
+    <div id="map"></div>
+    <div id="loading-popup" class="loading-popup" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-header">Doing some cloud math</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+</body>
+</html> 

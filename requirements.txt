@@ -1,0 +1,8 @@
+siphon
+numpy
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+requests 
+scipy>=1.7.0 

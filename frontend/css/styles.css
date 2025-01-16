@@ -1,0 +1,373 @@
+body { 
+    margin: 0; 
+    padding: 0; 
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+}
+
+#map { 
+    position: absolute;
+    top: 0;
+    left: 400px;
+    width: calc(100% - 400px);
+    height: 100%;
+}
+
+.control-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: #1a1a1a;
+    padding: 20px;
+    width: 400px !important;
+    color: white;
+    z-index: 1;
+    overflow-y: auto;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    box-sizing: border-box;
+    border-right: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-section {
+    margin-top: 0;
+}
+
+.settings-section h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.control-group {
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #fff;
+}
+
+/* Style for range inputs */
+.control-group input[type="range"] {
+    width: 100%;
+    height: 4px;
+    background: #666;
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+/* Thumb styles */
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb:hover {
+    background: #45a049;
+}
+
+/* Value display */
+.value-display {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+/* Remove the border line from radar range */
+.radar-range {
+    margin-top: 15px;
+    padding-top: 0;
+    border-top: none;
+}
+
+.control-group input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.radar-stations {
+    margin: 20px 0;
+}
+
+.radar-station-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px;
+    background: #333;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.radar-station-item label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.primary-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    background: #4CAF50;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.primary-button:hover {
+    background: #45a049;
+}
+
+#loading {
+    margin-top: 15px;
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+}
+
+/* Adjust input styles for dark theme */
+input[type="number"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* Add consistent width to all interactive elements */
+.control-group input[type="number"],
+.radar-station-item,
+.primary-button {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.accordion-item {
+    margin-bottom: 15px;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 1px;
+}
+
+.accordion-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+}
+
+.accordion-icon {
+    color: white;
+    transition: transform 0.3s ease;
+    font-size: 12px;
+}
+
+.accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    padding: 15px 0;
+    display: none;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+
+/* Style for labels inside accordion */
+.accordion-content .control-group label {
+    font-size: 14px;
+    color: #ccc;  /* Slightly darker than white */
+}
+
+/* Style for value display inside accordion */
+.accordion-content .value-display {
+    font-size: 12px;
+    color: #ccc;
+}
+
+/* Adjust spacing for controls inside accordion */
+.accordion-content .control-group {
+    margin-bottom: 15px;
+}
+
+.accordion-content.active {
+    display: block;
+}
+
+.loading-popup {
+    position: fixed;
+    left: 400px;  /* Start after control panel */
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-content {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 300px;
+    text-align: center;
+}
+
+.loading-header {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.loading-status {
+    color: #ccc;
+    margin: 15px 0;
+    min-height: 60px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #333;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    margin: 20px auto 0;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.control-panel-spacer {
+    flex-grow: 1;
+}
+
+.control-panel-bottom {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.scan-stats {
+    margin-bottom: 20px;
+}
+
+.scan-stats h3 {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.dbz-stats {
+    background: #333;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.dbz-stats .stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.dbz-stats .stat-label {
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dbz-stats input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.dbz-stats label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dbz-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    margin-left: 8px;
+    width: 80px;
+}
+
+.stats-summary {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ccc;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #fff;
+    font-size: 14px;
+}
+
+.stats-text {
+    font-family: monospace;
+    white-space: pre;
+    color: #ccc;
+    font-size: 13px;
+}
+
+/* Remove these since we're not using them anymore */
+.echo-counts,
+.echo-counts-header,
+.echo-count-row,
+.total-echoes,
+.dbz-range {
+    display: none;
+} 
